@@ -1,0 +1,181 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+college = read.csv("College.csv")
+```
+
+```{r}
+fix(college)
+```
+
+```{r}
+rownames(college) = college[,1]
+fix(college)
+```
+```{r}
+college=college[,-1]
+fix(college)
+```
+```{r}
+fix(college)
+```
+
+```{r}
+summary(college)
+```
+
+```{r}
+pairs(college[,1:10])
+```
+
+```{r}
+plot(college$Private,college$Outstate)
+```
+
+```{r}
+Elite=rep("No",nrow(college))
+Elite[college$Top10perc > 50] = "Yes"
+Elite = as.factor(Elite)
+college=data.frame(college,Elite)
+summary(college$Elite)
+plot(college$Elite,college$Outstate)
+```
+
+```{r}
+par(mfrow=c(2,2))
+hist(college$Apps)
+hist(college$perc.alumni, col=2)
+hist(college$S.F.Ratio, col=3, breaks=10)
+hist(college$Expend, breaks=50)
+```
+
+```{r}
+plot(college$Outstate, college$Grad.Rate)
+# High tuition correlates to high graduation rate.
+plot(college$Accept / college$Apps, college$S.F.Ratio)
+# Colleges with low acceptance rate tend to have low S:F ratio.
+plot(college$Top10perc, college$Grad.Rate)
+# Colleges with the most students from top 10% perc don't necessarily have
+# the highest graduation rate. Also, rate > 100 is erroneous!
+```
+
+```{r}
+# a)
+auto = read.csv("data/Auto.csv", header=T, na.strings="?")
+auto = na.omit(auto)
+dim(auto)
+summary(auto)
+```
+
+```{r}
+# b)
+sapply(auto[,1:7], range)
+```
+
+```{r}
+# c)
+sapply(auto[,1:7],mean)
+sapply(auto[,1:7],sd)
+```
+
+```{r}
+# d)
+filtered_auto = auto[-(10:85),]
+# asserts
+dim(filtered_auto) == dim(auto) - c(76,0)
+filtered_auto[9,] == auto[9,]
+filtered_auto[10,] == auto[86,]
+# show range, mean, std
+sapply(filtered_auto[1:7], range)
+sapply(filtered_auto[1:7], mean)
+sapply(filtered_auto[1:7], sd)
+```
+
+```{r}
+# e)
+pairs(auto)
+plot(auto$horsepower, auto$weight)
+plot(auto$mpg, auto$weight)
+auto$cylinders = as.factor(auto$cylinders)
+plot(auto$cylinders, auto$mpg)
+plot(auto$year, auto$mpg)
+```
+
+```{r}
+# f)
+pairs(auto)
+plot(auto$year, auto$mpg)
+plot(auto$weight, auto$mpg)
+```
+
+```{r}
+# 10
+library(MASS)
+boston = Boston
+```
+
+```{r}
+# b)
+summary(boston)
+pairs(boston)
+plot(boston$age, boston$crim)
+```
+
+```{r}
+# c)
+plot(Boston$age, Boston$crim)
+# Older homes, more crime
+plot(Boston$dis, Boston$crim)
+# Closer to work-area, more crime
+plot(Boston$rad, Boston$crim)
+# Higher index of accessibility to radial highways, more crime
+plot(Boston$tax, Boston$crim)
+# Higher tax rate, more crime
+plot(Boston$ptratio, Boston$crim)
+# Higher pupil:teacher ratio, more crime
+```
+
+```{r}
+# d)
+hist(Boston$crim[Boston$crim>1], breaks=25)
+hist(Boston$tax, breaks=25)
+# there is a large divide between suburbs with low tax rates and a peak at 660-680
+hist(Boston$ptratio, breaks=25)
+# a skew towards high ratios, but no particularly high ratios
+```
+
+```{r}
+# e)
+dim(subset(Boston, chas == 1))
+```
+
+```{r}
+# f)
+median(boston$ptratio)
+```
+
+```{r}
+t(subset(Boston, medv == min(Boston$medv)))
+dim(subset(Boston, rm > 7))
+dim(subset(Boston, rm > 8))
+summary(subset(Boston, rm > 8))
+summary(Boston)
+```
+
