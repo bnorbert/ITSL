@@ -1,0 +1,116 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+```{r}
+fix(Boston)
+names(Boston)
+```
+
+```{r}
+lm.fit=lm(medv~lstat,data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+```
+
+```{r}
+plot(Boston$lstat,Boston$medv)
+abline(lm.fit)
+```
+
+```{r}
+plot(Boston$lstat,Boston$medv,col="red")
+abline(lm.fit,lwd=3)
+abline(lm.fit,lwd=3,col="red")
+plot(Boston$lstat,Boston$medv,pch=20)
+plot(Boston$lstat,Boston$medv,pch="+")
+plot(1:20,1:20,pch=1:20)
+```
+
+```{r}
+plot(lm.fit)
+```
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+```{r}
+lm.fit = lm(Boston$medv~Boston$lstat+Boston$age, data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+lm.fit = lm(Boston$medv~.,data=Boston)
+summary(lm.fit)
+```
+
+```{r}
+lm.fit = lm(Boston$medv~Boston$lstat,data=Boston)
+lm.fit2 = lm(Boston$medv~Boston$lstat + I(Boston$lstat^2),)
+anova(lm.fit, lm.fit2)
+```
+
+```{r}
+plot(lm.fit2)
+```
+
+```{r}
+attach(Boston)
+lm.fit5=lm(medv~poly(lstat ,5))
+lm.fitlog = lm(medv~log(rm),data=Boston)
+```
+```{r}
+attach(Carseats)
+names(Carseats)
+```
+
+```{r}
+lm.fit=lm(Sales~.+Income:Advertising +Price:Age,data=Carseats)
+summary(lm.fit)
+contrasts(ShelveLoc)
+```
+
+```{r}
+LoadLibraries = function(){
+  library(MASS)
+  library(ISLR)
+  print("The libraries have been loaded!")
+}
+```
+
+```{r}
+LoadLibraries()
+```
+
