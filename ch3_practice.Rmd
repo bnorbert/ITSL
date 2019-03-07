@@ -1,0 +1,275 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+```{r}
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+library(MASS)
+library(ISLR)
+attach(Auto)
+```
+
+```{r}
+# Problem 8
+lm.fit = lm(mpg~horsepower, data=Auto)
+summary(lm.fit)
+```
+
+```{r}
+predict(lm.fit, data.frame(horsepower=c(98)), interval='confidence')
+```
+
+```{r}
+predict(lm.fit, data.frame(horsepower=c(98)), interval='prediction')
+```
+
+```{r}
+plot(horsepower, mpg)
+abline(lm.fit)
+```
+
+```{r}
+plot(lm.fit)
+```
+
+```{r}
+model <- lm(mpg~horsepower,data=Auto)
+plot(model)
+```
+
+```{r}
+pairs(Auto)
+```
+
+```{r}
+cor(subset(Auto, select=-name))
+```
+
+```{r}
+model <- lm(mpg~.-name,data=Auto)
+summary(model)
+plot(model)
+```
+
+```{r}
+names(Auto)
+``` 
+
+```{r}
+model <- lm(mpg~horsepower + horsepower*year,data=Auto)
+summary(model)
+plot(model)
+```
+
+```{r}
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+```{r}
+model <- lm(log(mpg)~log(horsepower) + I(horsepower^2) + sqrt(origin) + horsepower:year + log(weight),data=Auto)
+summary(model)
+plot(model)
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+```{r}
+attach(Carseats)
+names(Carseats)
+```
+
+```{r}
+model <- lm(Sales~Price + US, data=Carseats)
+summary(model)
+plot(model)
+confint(model)
+plot(predict(lm.fit2), rstudent(lm.fit2))
+```
+
+```{r}
+# Problem 11
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm(100)
+model<-lm(y~x+0)
+summary(model)
+plot(model)
+plot(x,y)
+```
+
+```{r}
+model<-lm(x~y+0)
+summary(model)
+plot(model)
+plot(y,x)
+```
+
+```{r}
+set.seed(1)
+x = rnorm(100)
+y = 2*x
+model1 = lm(y~x+0)
+model2 = lm(x~y+0)
+summary(model1)
+summary(model2)
+```
+
+```{r}
+set.seed(1)
+x <- rnorm(100)
+y <- -x
+sum(x^2)
+sum(y^2)
+model1 <- lm(y~x+0)
+model2 <- lm(x~y+0)
+summary(model1)
+summary(model2)
+```
+
+```{r}
+# Problem 13
+set.seed(1)
+X = rnorm(100)
+eps = rnorm(100, 0, .25)
+Y = -1 + .5 * X + eps
+plot(X,Y)
+model<-lm(Y~X)
+summary(model)
+```
+
+```{r}
+plot(X,Y)
+abline(model,lwd=2,col=2)
+abline(-1,.5,lwd=2,col=3)
+legend(-1, legend = c("model fit", "pop. regression"), col=2:3, lwd=2)
+```
+
+```{r}
+model<-lm(Y~X+I(X^2))
+summary(model)
+```
+
+```{r}
+# decrease noise
+set.seed(1)
+X = rnorm(100)
+eps = rnorm(100, 0, .01)
+Y = -1 + .5 * X + eps
+plot(X,Y)
+model<-lm(Y~X)
+summary(model)
+plot(X,Y)
+abline(model,lwd=2,col=2)
+abline(-1,.5,lwd=2,col=3)
+legend(-1, legend = c("model fit", "pop. regression"), col=2:3, lwd=2)
+```
+
+```{r}
+model<-lm(Y~X+I(X^2))
+summary(model)
+```
+
+```{r}
+# increase noise
+set.seed(1)
+X = rnorm(100)
+eps = rnorm(100, 0, .9)
+Y = -1 + .5 * X + eps
+plot(X,Y)
+model<-lm(Y~X)
+summary(model)
+plot(X,Y)
+abline(model,lwd=2,col=2)
+abline(-1,.5,lwd=2,col=3)
+legend(-1, legend = c("model fit", "pop. regression"), col=2:3, lwd=2)
+```
+
+```{r}
+model<-lm(Y~X+I(X^2))
+summary(model)
+```
+
+```{r}
+set.seed(1)
+x1=runif(100)
+x2=0.5*x1+rnorm(100)/10
+y=2+2*x1+0.3*x2+rnorm(100)
+model <- lm(y~x1+x2)
+summary(model)
+```
+
+```{r}
+cor(x1,x2)
+plot(x1,x2)
+```
+
+```{r}
+model <- lm(y~x1)
+summary(model)
+```
+
+```{r}
+model <- lm(y~x2)
+summary(model)
+```
+
+```{r}
+attach(Boston)
+df = Boston
+names(df)
+```
+
+```{r}
+lm.zn = lm(crim~zn, data=df)
+summary(lm.zn)
+plot(lm.zn)
+```
+
+```{r}
+lm.indus = lm(crim~indus)
+summary(lm.indus) # yes
+```
+
+```{r}
+lm.medv = lm(crim~medv)
+summary(lm.medv) # yes
+```
+
+```{r}
+plot(lm)
+```
+
+```{r}
+model=lm(crim~., data=df)
+summary(model)
+```
+
+```{r}
+lm.nox = lm(crim~nox, data=df)
+summary(lm.nox)
+coefficients(lm.nox)
+coefficients(lm.nox)[2]
+```
+
+```{r}
+model = lm(crim~poly(nox,3), data=df)
+summary(model)
+plot(model)
+```
+
