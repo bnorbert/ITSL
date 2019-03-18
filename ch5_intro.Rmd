@@ -1,0 +1,94 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+library(ISLR)
+set.seed(1)
+train=sample(392, 196)
+attach(Auto)
+```
+
+```{r}
+lm.fit = lm(mpg~horsepower, data=Auto, subset=train)
+```
+
+```{r}
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+```
+
+```{r}
+do_work = function(poly_pow) {
+  lm.fit = lm(mpg~poly(horsepower, poly_pow), data=Auto, subset=train)
+  return(mean((mpg - predict(lm.fit, Auto))[-train]^2))
+}
+print(do_work(2))
+print(do_work(3))
+```
+
+```{r}
+set.seed(2)
+train=sample(392,196)
+print(do_work(1))
+print(do_work(2))
+print(do_work(3))
+```
+
+```{r}
+library(boot)
+glm.fit=glm(mpg~horsepower ,data=Auto)
+cv.err=cv.glm(Auto,glm.fit)
+cv.err$delta
+```
+
+```{r}
+cv.error = rep(0,5)
+for(i in 1:5){
+  glm.fit = glm(mpg~poly(horsepower,i), data=Auto)
+  cv.error[i] = cv.glm(Auto,glm.fit)$delta[1]
+}
+print(cv.error)
+```
+
+```{r}
+set.seed(17)
+cv.error.10=rep(0,10)
+for(i in 1:10){
+  glm.fit = glm(mpg~poly(horsepower,i),data=Auto)
+  cv.error.10[i] = cv.glm(Auto, glm.fit, K=10)$delta[1]
+  print(cv.glm(Auto, glm.fit, K=10)$delta)
+}
+print(cv.error.10)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
