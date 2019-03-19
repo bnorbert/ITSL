@@ -1,2 +1,2 @@
 # ITSL
-Exercises from the book
+Exercises from Introduction to Statistical Learning
