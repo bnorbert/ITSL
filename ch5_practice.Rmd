@@ -1,0 +1,222 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+# PROBLEM 5
+library(MASS)
+library(ISLR)
+library(boot)
+attach(Default)
+names(Default)
+```
+
+```{r}
+train = 1:dim(Default)[1]/2
+```
+
+```{r}
+glm.fit = glm(default~income + balance, data=Default, family=binomial, subset=train)
+glm.probs = predict(glm.fit, Default[-train,], type='response')
+glm.pred = rep("No", length(glm.probs))
+glm.pred[glm.probs > .5] = "Yes"
+table(glm.pred, default[-train])
+mean(glm.pred != default[-train])
+```
+
+```{r}
+set.seed(1)
+do_work = function() {
+  train = sample(dim(Default)[1], dim(Default)[1]/2)
+  glm.fit = glm(default~income + balance, data=Default, family=binomial, subset=train)
+  glm.probs = predict(glm.fit, Default[-train,], type='response')
+  glm.pred = rep("No", length(glm.probs))
+  glm.pred[glm.probs > .5] = "Yes"
+  table(glm.pred, default[-train])
+  return(mean(glm.pred != default[-train]))
+}
+```
+
+```{r}
+do_work()
+do_work()
+do_work()
+```
+
+```{r}
+do_work_with_dummy = function() {
+  train = sample(dim(Default)[1], dim(Default)[1]/2)
+  glm.fit = glm(default~income + balance + student, data=Default, family=binomial, subset=train)
+  glm.probs = predict(glm.fit, Default[-train,], type='response')
+  glm.pred = rep("No", length(glm.probs))
+  glm.pred[glm.probs > .5] = "Yes"
+  table(glm.pred, default[-train])
+  return(mean(glm.pred != default[-train]))
+}
+do_work_with_dummy()
+```
+
+```{r}
+# PROBLEM 6
+set.seed(1)
+summary(glm(default~income+balance, data=Default, family=binomial))
+```
+
+```{r}
+boot.fn = function(data, index) {
+  return(coef(glm(default~income+balance, data=Default, family=binomial, subset=index)))
+}
+```
+
+```{r}
+boot(Default, boot.fn, R=50)
+```
+
+```{r}
+# PROBLEM 7
+set.seed(1)
+names(Weekly)
+attach(Weekly)
+```
+
+```{r}
+glm.fit1 = glm(Direction~Lag1 + Lag2, data=Weekly, family=binomial)
+glm.fit2 = glm(Direction~Lag1 + Lag2, data=Weekly[-1,], family = binomial)
+```
+
+```{r}
+glm.prob1 = predict(glm.fit2, Weekly[1,], type='response')
+glm.prob1 > .5
+```
+
+```{r}
+total = 0
+for(i in 1:dim(Weekly)[1]){
+  prob = predict(
+    glm(Direction~Lag1+Lag2, data=Weekly[-i,], family=binomial),
+    Weekly[i,],
+    type='response',
+  )
+  pred = "Down"
+  if(prob > .5) pred="Up"
+  total = total + (pred != Direction[i])
+}
+```
+
+```{r}
+total
+total / length(Direction)
+```
+
+```{r}
+# PROBLEM 8
+set.seed(4)
+x=rnorm(100)
+y=rnorm(100)
+y=x-2*x^2+rnorm(100)
+```
+
+```{r}
+plot(x,y)
+```
+
+```{r}
+df=data.frame(x,y)
+library(boot)
+```
+
+```{r}
+set.seed(1)
+do_poly = function(poly_deg) {
+  glm.fit = glm(y~poly(x,poly_deg), data=df)
+  cv.glm(df, glm.fit)$delta
+}
+```
+
+```{r}
+do_poly(1)
+do_poly(2)
+do_poly(3)
+do_poly(4)
+```
+
+```{r}
+set.seed(19)
+do_poly(1)
+do_poly(2)
+do_poly(3)
+do_poly(4)
+```
+
+```{r}
+summary(glm(y~poly(x,4)))
+```
+
+```{r}
+# PROBLEM 9
+library(MASS)
+names(Boston)
+attach(Boston)
+```
+
+```{r}
+medv.mean = mean(medv)
+medv.err = sd(medv) / sqrt(length(medv))
+medv.err
+```
+
+```{r}
+boot.fn = function(data, index) return(mean(data[index]))
+library(boot)
+bstrap = boot(medv, boot.fn, 1000)
+bstrap
+```
+
+```{r}
+t.test(medv)
+
+```
+
+```{r}
+c(bstrap$t0 - 2 * 0.4119, bstrap$t0 + 2 * 0.4119)
+```
+
+```{r}
+medv.med = median(medv)
+medv.med
+```
+
+```{r}
+boot.fn = function(data,index) {
+  return(median(data[index]))
+}
+boot(medv, boot.fn, R=1000)
+```
+
+```{r}
+medv.tenth = quantile(medv, c(.1))
+medv.tenth
+```
+
+```{r}
+boot.fn = function(data, index) {
+  return(quantile(data[index], c(.1)))
+}
+boot(medv, boot.fn, R=1000)
+```
+
