@@ -1,0 +1,146 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+set.seed(1)
+X=rnorm(100)
+eps=rnorm(100)
+```
+
+```{r}
+beta0 = 3
+beta1 = 2
+beta2 = -3
+beta3 = 0.3
+Y = beta0 + beta1 * X + beta2 * X^2 + beta3 * X^3 + eps
+```
+
+```{r}
+library(leaps)
+data.full = data.frame(y = Y, x = X)
+mod.full = regsubsets(y ~ poly(x, 10, raw = T), data = data.full, nvmax = 10)
+mod.summary = summary(mod.full)
+
+# Find the model size for best cp, BIC and adjr2
+which.min(mod.summary$cp)
+```
+
+```{r}
+which.min(mod.summary$bic)
+which.min(mod.summary$adjr2)
+```
+
+```{r}
+plot(mod.summary$cp, xlab = "Subset Size", ylab = "Cp", pch = 20, type = "l")
+points(3, mod.summary$cp[3], pch = 4, col = "red", lwd = 7)
+plot(mod.summary$bic, xlab = "Subset Size", ylab = "BIC", pch = 20, type = "l")
+points(3, mod.summary$bic[3], pch = 4, col = "red", lwd = 7)
+plot(mod.summary$adjr2, xlab = "Subset Size", ylab = "Adjusted R2", pch = 20, 
+    type = "l")
+points(3, mod.summary$adjr2[3], pch = 4, col = "red", lwd = 7)
+```
+
+```{r}
+mod.fwd = regsubsets(y ~ poly(x, 10, raw = T), data = data.full, nvmax = 10, 
+    method = "forward")
+mod.bwd = regsubsets(y ~ poly(x, 10, raw = T), data = data.full, nvmax = 10, 
+    method = "backward")
+fwd.summary = summary(mod.fwd)
+bwd.summary = summary(mod.bwd)
+which.min(fwd.summary$cp)
+which.min(bwd.summary$cp)
+which.min(fwd.summary$bic)
+which.min(bwd.summary$bic)
+which.max(fwd.summary$adjr2)
+which.max(bwd.summary$adjr2)
+
+```
+
+```{r}
+par(mfrow = c(3, 2))
+plot(fwd.summary$cp, xlab = "Subset Size", ylab = "Forward Cp", pch = 20, type = "l")
+points(3, fwd.summary$cp[3], pch = 4, col = "red", lwd = 7)
+plot(bwd.summary$cp, xlab = "Subset Size", ylab = "Backward Cp", pch = 20, type = "l")
+points(3, bwd.summary$cp[3], pch = 4, col = "red", lwd = 7)
+plot(fwd.summary$bic, xlab = "Subset Size", ylab = "Forward BIC", pch = 20, 
+    type = "l")
+points(3, fwd.summary$bic[3], pch = 4, col = "red", lwd = 7)
+plot(bwd.summary$bic, xlab = "Subset Size", ylab = "Backward BIC", pch = 20, 
+    type = "l")
+points(3, bwd.summary$bic[3], pch = 4, col = "red", lwd = 7)
+plot(fwd.summary$adjr2, xlab = "Subset Size", ylab = "Forward Adjusted R2", 
+    pch = 20, type = "l")
+points(3, fwd.summary$adjr2[3], pch = 4, col = "red", lwd = 7)
+plot(bwd.summary$adjr2, xlab = "Subset Size", ylab = "Backward Adjusted R2", 
+    pch = 20, type = "l")
+points(4, bwd.summary$adjr2[4], pch = 4, col = "red", lwd = 7)
+```
+
+```{r}
+library(glmnet)
+```
+
+```{r}
+xmat = model.matrix(y ~ poly(x, 10, raw = T), data = data.full)[, -1]
+mod.lasso = cv.glmnet(xmat, Y, alpha = 1)
+best.lambda = mod.lasso$lambda.min
+best.lambda
+```
+
+```{r}
+plot(mod.lasso)
+```
+
+```{r}
+# Next fit the model on entire data using best lambda
+best.model = glmnet(xmat, Y, alpha = 1)
+predict(best.model, s = best.lambda, type = "coefficients")
+```
+
+```{r}
+beta7 = 7
+Y = beta0 + beta7 * X^7 + eps
+# Predict using regsubsets
+data.full = data.frame(y = Y, x = X)
+mod.full = regsubsets(y ~ poly(x, 10, raw = T), data = data.full, nvmax = 10)
+mod.summary = summary(mod.full)
+
+# Find the model size for best cp, BIC and adjr2
+which.min(mod.summary$cp)
+which.min(mod.summary$bic)
+which.max(mod.summary$adjr2)
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
