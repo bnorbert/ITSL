@@ -1,0 +1,138 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+x = seq(-2,2,length=1000)
+y = 1 + x + -2 * (x-1)^2 * I(x>=1)
+plot(x,y)
+```
+
+```{r}
+x = seq(-2,2, length=100)
+y = c(1 + 0 + 0, # x = -2
+      1 + 0 + 0, # x = -1
+      1 + 1 + 0, # x = 0
+      1 + (1-0) + 0, # x = 1
+      1 + (1-1) + 0 # x =2
+      )
+plot(x,y)
+```
+
+```{r}
+library(ISLR)
+library(boot)
+attach(Wage)
+```
+
+```{r}
+all.deltas = rep(NA,10)
+for (i in 1:10) {
+  glm.fit = glm(wage~poly(age,i), data=Wage)
+  all.deltas[i] = cv.glm(Wage, glm.fit, K=10)$delta[2]
+}
+plot(1:10, all.deltas, xlab="Poly deg", ylab="CV Err", type="l", pch=2, lwd=2, ylim=c(1590, 1700))
+all.min = min(all.deltas)
+all.sd = sd(all.deltas)
+abline(h=all.min - .2 * all.sd, col="red", lty="dashed")
+abline(h=all.min + .2 * all.sd, col="red", lty="dashed")
+```
+
+```{r}
+glm.fit1=lm(wage~poly(age,1), data=Wage)
+glm.fit2=lm(wage~poly(age,2), data=Wage)
+glm.fit3=lm(wage~poly(age,3), data=Wage)
+glm.fit4=lm(wage~poly(age,4), data=Wage)
+glm.fit5=lm(wage~poly(age,5), data=Wage)
+glm.fit6=lm(wage~poly(age,6), data=Wage)
+glm.fit7=lm(wage~poly(age,7), data=Wage)
+glm.fit8=lm(wage~poly(age,8), data=Wage)
+glm.fit9=lm(wage~poly(age,9), data=Wage)
+glm.fit10=lm(wage~poly(age,10), data=Wage)
+anova(glm.fit1,glm.fit2,glm.fit3,glm.fit4,glm.fit5,glm.fit6,glm.fit7,glm.fit8,glm.fit9,glm.fit10)
+```
+
+```{r}
+plot(wage~age, data=Wage, col="darkgrey")
+agelims = range(age)
+age.grid = seq(agelims[1], agelims[2])
+lm.fit=lm(wage~poly(age,3), data=Wage)
+lm.preds=predict(lm.fit, data.frame(age=age.grid))
+lines(age.grid, lm.preds, col="blue",lwd=2)
+```
+
+```{r}
+all.cvs = rep(NA, 10)
+for(i in 2:10) {
+  Wage$age.cut = cut(Wage$age, i)
+  lm.fit = glm(wage~age.cut,data=Wage)
+  all.cvs[i] = cv.glm(Wage, lm.fit, K=10)$delta[2]
+}
+plot(2:10, all.cvs[-1], type="l", lwd=2, pch=2)
+```
+
+```{r}
+agelims=range(Wage$age)
+age.grid=seq(agelims[1], agelims[2])
+
+lm.fit=lm(wage~cut(age,8),data=Wage)
+lm.preds=predict(lm.fit, data.frame(age=age.grid))
+
+plot(wage~age, col="darkgrey")
+lines(age.grid, lm.preds, col="red", lwd=2)
+```
+
+```{r}
+library(ISLR)
+set.seed(1)
+summary(Wage$maritl)
+summary(Wage$jobclass)
+```
+
+```{r}
+plot(Wage$maritl,Wage$wage)
+plot(Wage$jobclass,Wage$wage)
+```
+
+```{r}
+library(gam)
+```
+
+```{r}
+deviance(lm(wage~maritl, data=Wage))
+deviance(lm(wage~jobclass, data=Wage))
+deviance(lm(wage~maritl + jobclass, data=Wage))
+deviance(gam(wage~maritl + jobclass + s(age,4),data=Wage))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
